@@ -135,4 +135,4 @@ document.querySelector('.buttons').onclick = (event) => {
     }
 }
 
-//! Warning! Above is crappy but working code...&
+//! Warning! Above is crappy but working code...
