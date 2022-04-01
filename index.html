@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Calculator</title>
+    <link rel="icon" type="image/png" href="img/calculator.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="index.js" defer></script>
+</head>
+<body>
+<div class="calc flex flex-col justify-between w-[317px] h-[550px] p-[35px] border border-black rounded-2xl bg-[linear-gradient(191.34deg,_#17181A_-4.95%,_#17181A_103.74%);] text-white font-['Poppins',_sans-serif] font-medium mx-auto mt-[50px] shadow-2xl">
+    <div class="calc-screen flex justify-end items-center h-full mb-[18px]">
+        <p class="text-6xl overflow-x-auto overflow-y-hidden"></p>
+    </div>
+
+    <div class="buttons grid grid-cols-[repeat(4,_50px)] auto-rows-[50px] gap-[15px] justify-center text-2xl text-center leading-[50px]">
+        <div data-symbol="ac" class="special_action ac hover:brightness-125 active:brightness-75 cursor-pointer select-none rounded-2xl font-normal text-[#A5A5A5] bg-[#616161]">Ac</div>
+        <div data-symbol="±" class="special_action btn plus_minus hover:brightness-125 active:brightness-90 cursor-pointer select-none rounded-2xl font-normal text-[#A5A5A5] bg-[#616161]">±</div>
+        <div data-symbol="%" class="special_action btn percent hover:brightness-125 active:brightness-90 cursor-pointer select-none rounded-2xl font-normal text-[#A5A5A5] bg-[#616161]">%</div>
+        <div data-symbol="/" class="action division hover:brightness-125 active:brightness-90 cursor-pointer select-none rounded-2xl text-[#339DFF] bg-[#005DB2]">÷</div>
+
+        <div data-symbol="7" class="digit seven hover:brightness-125 active:brightness-90 cursor-pointer select-none rounded-2xl text-[#29A8FF] bg-[#303136]">7</div>
+        <div data-symbol="8" class="digit eight hover:brightness-125 active:brightness-90 cursor-pointer select-none rounded-2xl text-[#29A8FF] bg-[#303136]">8</div>
+        <div data-symbol="9" class="digit nine hover:brightness-125 active:brightness-90 cursor-pointer select-none rounded-2xl text-[#29A8FF] bg-[#303136]">9</div>
+        <div data-symbol="*" class="action multiply hover:brightness-125 active:brightness-90 cursor-pointer select-none rounded-2xl text-[#339DFF] bg-[#005DB2]">×</div>
+
+        <div data-symbol="4" class="digit four hover:brightness-125 active:brightness-90 cursor-pointer select-none rounded-2xl text-[#29A8FF] bg-[#303136]">4</div>
+        <div data-symbol="5" class="digit five hover:brightness-125 active:brightness-90 cursor-pointer select-none rounded-2xl text-[#29A8FF] bg-[#303136]">5</div>
+        <div data-symbol="6" class="digit six hover:brightness-125 active:brightness-90 cursor-pointer select-none rounded-2xl text-[#29A8FF] bg-[#303136]">6</div>
+        <div data-symbol="-" class="action minus hover:brightness-125 active:brightness-90 cursor-pointer select-none rounded-2xl text-[#339DFF] bg-[#005DB2]">-</div>
+
+        <div data-symbol="1" class="digit one hover:brightness-125 active:brightness-90 cursor-pointer select-none rounded-2xl text-[#29A8FF] bg-[#303136]">1</div>
+        <div data-symbol="2" class="digit two hover:brightness-125 active:brightness-90 cursor-pointer select-none rounded-2xl text-[#29A8FF] bg-[#303136]">2</div>
+        <div data-symbol="3" class="digit three hover:brightness-125 active:brightness-90 cursor-pointer select-none rounded-2xl text-[#29A8FF] bg-[#303136]">3</div>
+        <div data-symbol="+" class="action plus hover:brightness-125 active:brightness-90 cursor-pointer select-none rounded-2xl text-[#339DFF] bg-[#005DB2]">+</div>
+
+        <div data-symbol="0" class="digit zero col-span-2 hover:brightness-125 active:brightness-90 cursor-pointer select-none rounded-2xl text-[#29A8FF] bg-[#303136]">0</div>
+        <div data-symbol="." class="digit dot hover:brightness-125 active:brightness-90 cursor-pointer select-none rounded-2xl text-[#29A8FF] bg-[#303136]">.</div>
+        <div data-symbol="=" class="action equal hover:brightness-125 active:brightness-90 cursor-pointer select-none rounded-2xl text-[#B2DAFF] bg-[#1991FF]">=</div>
+    </div>
+</div>
+</body>
+</html>
