@@ -133,7 +133,6 @@ document.querySelector('.buttons').onclick = (event) => {
                 break;
         }
     }
-    console.log(arr)
 }
 
 //! Warning! Above is crappy but working code...
