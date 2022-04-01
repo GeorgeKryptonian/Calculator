@@ -65,15 +65,19 @@ document.querySelector('.buttons').onclick = (event) => {
     let dataSymbol = event.target.getAttribute('data-symbol');
 
     if (arrClassList.includes('digit')) {
-        if (dataSymbol !== '.' && num !== '' || dataSymbol !== '.' && !num.includes('.') || num[0] !== '0' && num.length !== 1 && dataSymbol === '.') {
+        if (dataSymbol === '.' && num === '' || dataSymbol === '.' && num.includes('.') || num[0] === '0' && num.length === 1 && dataSymbol !== '.') {
+            return;
+        } else if (dataSymbol === '.') {
+            initialStylingInactivity();
+        } else {
             initialStylingActivity();
-            if (sign !== '' && arr.length !== 0) {
-                arr.push(sign);
-                sign = '';
-            }
-            num += dataSymbol;
-            output.textContent = num;
         }
+        if (sign !== '' && arr.length !== 0) {
+            arr.push(sign);
+            sign = '';
+        }
+        num += dataSymbol;
+        output.textContent = num;
     } else if (arrClassList.includes('action')) {
         if (dataSymbol !== '=') {
             if (num !== '') {
@@ -129,6 +133,7 @@ document.querySelector('.buttons').onclick = (event) => {
                 break;
         }
     }
+    console.log(arr)
 }
 
 //! Warning! Above is crappy but working code...
