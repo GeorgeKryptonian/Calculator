@@ -3,6 +3,7 @@
 let num = '';
 let evalFirstNum = '';
 let sign = '';
+let prevSymbol = '';
 let arr = [];
 const output = document.querySelector('.calc-screen p');
 const arrActions = ['/', '*', '-', '+'];
@@ -14,6 +15,7 @@ function clearAll() {
     evalFirstNum = '';
     sign = '';
     arr = [];
+    prevSymbol = '';
     output.textContent = '';
     initialStylingInactivity();
 }
@@ -50,7 +52,6 @@ function initialStylingInactivity() {
         item.classList.add('brightness-75', 'cursor-not-allowed');
     })
 }
-initialStylingInactivity()
 
 function initialStylingActivity() {
     stylingActive();
@@ -60,11 +61,13 @@ function initialStylingActivity() {
     })
 }
 
+initialStylingInactivity();
+
 document.querySelector('.buttons').onclick = (event) => {
     let arrClassList = [...event.target.classList];
     let dataSymbol = event.target.getAttribute('data-symbol');
 
-    if (arrClassList.includes('digit')) {
+    if (arrClassList.includes('digit')) { //? Digit check
         if (dataSymbol === '.' && num === '' || dataSymbol === '.' && num.includes('.') || num[0] === '0' && num.length === 1 && dataSymbol !== '.') {
             return;
         } else if (dataSymbol === '.') {
@@ -72,67 +75,83 @@ document.querySelector('.buttons').onclick = (event) => {
         } else {
             initialStylingActivity();
         }
-        if (sign !== '' && arr.length !== 0) {
-            arr.push(sign);
-            sign = '';
+        if (arr.length === 0) {
+            num = dataSymbol;
+            arr.push(num);
+            output.textContent = num;
+        } else if (arr.length === 1) {
+            num += dataSymbol;
+            arr[0] = num;
+            output.textContent = num;
+        } else if (arr.length === 2) {
+            num = dataSymbol;
+            arr.push(num);
+            output.textContent = num;
+        } else if (arr.length === 3) {
+            num += dataSymbol;
+            arr[2] = num;
+            output.textContent = num;
         }
-        num += dataSymbol;
-        output.textContent = num;
-    } else if (arrClassList.includes('action')) {
+    } else if (arrClassList.includes('action')) { //? Action check
         if (dataSymbol !== '=') {
-            if (num !== '') {
-                if (num.slice(-1) === '.') return;
-                arr.push(num);
-                num = '';
-                stylingInactive();
-            }
-            if (arr.length === 3) {
+            if (prevSymbol === '.') return;
+            stylingInactive();
+
+            if (arr.length === 1) {
+                arr.push(dataSymbol);
+                output.textContent = dataSymbol;
+            } else if (arr.length === 2) {
+                arr[1] = dataSymbol;
+                output.textContent = dataSymbol;
+            } else if (arr.length === 3) {
                 if (arr[1] === '/' && arr[2] === '0') {
                     divisionAndZero();
-                    return;
                 } else {
-                    evalFirstNum = String(eval(arr.join(' ')));
-                    output.textContent = evalFirstNum;
-                    arr.splice(0, arr.length, evalFirstNum);
+                    num = String(eval(arr.join(' ')));
+                    output.textContent = num;
+                    arr.length = 0;
+                    arr.push(num, dataSymbol);
                 }
             }
-            sign = dataSymbol;
-        } else {
-            if (num !== '') {
-                arr.push(num);
-                num = '';
-            }
+        } else if (dataSymbol === '=' && arr.length === 3) {
             if (arr[1] === '/' && arr[2] === '0') {
                 divisionAndZero();
-                return;
-            }
-            output.textContent = eval(arr.join(' '));
-        }
-    } else if (arrClassList.includes('special_action')) {
-        if (arrActions.includes(sign)) return;
-        switch (dataSymbol) {
-            case "ac":
-                clearAll();
-                return;
-            case "±": //TODO Doesn't work with total(=). Will be fixed.
-                switch (String(Math.sign(num))) {
-                    case "1":
-                        num = String(-num);
-                        output.textContent = num;
-                        break;
-                    case "-1":
-                        num = num.slice(1);
-                        output.textContent = num;
-                        break;
-                }
-                break;
-            case "%": //TODO Doesn't work with total(=). Will be fixed.
-                if (num === '') return;
-                num = String(num / 100);
+            } else {
+                num = String(eval(arr.join(' ')));
                 output.textContent = num;
-                break;
+                arr.length = 0;
+                arr.push(num);
+            }
         }
+    } else if (arrClassList.includes('special_action')) { //? Special action check
+        // if (arrActions.includes(sign)) return;
+        // switch (dataSymbol) {
+        //     case "ac":
+        //         clearAll();
+        //         return;
+        //     case "±": //TODO Doesn't work with total(=). Will be fixed.
+        //         switch (String(Math.sign(num))) {
+        //             case "1":
+        //                 num = String(-num);
+        //                 output.textContent = num;
+        //                 break;
+        //             case "-1":
+        //                 num = num.slice(1);
+        //                 output.textContent = num;
+        //                 break;
+        //         }
+        //         break;
+        //     case "%": //TODO Doesn't work with total(=). Will be fixed.
+        //         if (num === '') return;
+        //         num = String(num / 100);
+        //         output.textContent = num;
+        //         break;
+        // }
     }
+
+    if (dataSymbol !== null && dataSymbol !== '=') prevSymbol = dataSymbol;
+
+    console.log(arr, ' | ', prevSymbol);
 }
 
 //! Warning! Above is crappy but working code...
