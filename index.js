@@ -1,19 +1,14 @@
 //! Warning! Below is crappy but working code...
 
 let num = '';
-let evalFirstNum = '';
-let sign = '';
 let prevSymbol = '';
 let arr = [];
 const output = document.querySelector('.calc-screen p');
-const arrActions = ['/', '*', '-', '+'];
 const collectionSpecialActions = document.querySelectorAll('.special_action');
 const collectionActions = document.querySelectorAll('.action');
 
 function clearAll() {
     num = '';
-    evalFirstNum = '';
-    sign = '';
     arr.length = 0;
     prevSymbol = '';
     output.textContent = '';
@@ -96,7 +91,6 @@ document.querySelector('.buttons').onclick = (event) => {
         if (dataSymbol !== '=') {
             if (prevSymbol === '.') return;
             stylingInactive();
-
             if (arr.length === 1) {
                 arr.push(dataSymbol);
                 // output.textContent = dataSymbol;
@@ -106,71 +100,69 @@ document.querySelector('.buttons').onclick = (event) => {
             } else if (arr.length === 3) {
                 if (arr[1] === '/' && arr[2] === '0') {
                     divisionAndZero();
-                } else {
-                    num = String(eval(arr.join(' ')));
+                    return;
+                }
+                num = String(eval(arr.join(' ')));
+                if (arr.join('').includes('.')) {
                     if (num.includes('.')) {
                         num = String(+num + Number.EPSILON); //TODO Test with negative numbers.
                         num = num.slice(0, Math.max(...(arr.map(function (item) {
                             return item.length;
                         }))))
                     }
-
-                    output.textContent = num;
-                    arr.length = 0;
-                    arr.push(num, dataSymbol);
                 }
+                output.textContent = num;
+                arr.length = 0;
+                arr.push(num, dataSymbol);
             }
         } else if (dataSymbol === '=' && arr.length === 3) {
             if (arr[1] === '/' && arr[2] === '0') {
                 divisionAndZero();
-            } else {
-                num = String(eval(arr.join(' ')));
+                return;
+            }
+            num = String(eval(arr.join(' ')));
+            if (arr.join('').includes('.')) {
                 if (num.includes('.')) {
                     num = String(+num + Number.EPSILON); //TODO Test with negative numbers.
                     num = num.slice(0, Math.max(...(arr.map(function (item) {
                         return item.length;
                     }))))
                 }
-
-                output.textContent = num;
-                arr.length = 0;
-                arr.push(num);
             }
-        }
+            output.textContent = num;
+            arr.length = 0;
+            arr.push(num);
+        } else if (dataSymbol === '=' && arr.length !== 3) return;
+        num = '';
     } else if (arrClassList.includes('special_action')) { //? Special action check
         switch (dataSymbol) {
             case "ac":
                 clearAll();
+                return;
+            case "±":
+                switch (String(Math.sign(num))) {
+                    case "1":
+                        num = String(-num);
+                        break;
+                    case "-1":
+                        num = num.slice(1);
+                        break;
+                }
+                break;
+            case "%":
+                if (num === '' || prevSymbol === '.') return;
+                num = String(num / 100);
                 break;
         }
-
-        //! ↓ Rewrite special actions ↓
-        // if (arrActions.includes(sign)) return;
-        // switch (dataSymbol) {
-        //     case "ac":
-        //         clearAll();
-        //         return;
-        //     case "±": //TODO Doesn't work with total(=). Will be fixed.
-        //         switch (String(Math.sign(num))) {
-        //             case "1":
-        //                 num = String(-num);
-        //                 output.textContent = num;
-        //                 break;
-        //             case "-1":
-        //                 num = num.slice(1);
-        //                 output.textContent = num;
-        //                 break;
-        //         }
-        //         break;
-        //     case "%": //TODO Doesn't work with total(=). Will be fixed.
-        //         if (num === '') return;
-        //         num = String(num / 100);
-        //         output.textContent = num;
-        //         break;
-        // }
+        if (arr.length === 1) {
+            arr[0] = num;
+        } else if (arr.length === 3) {
+            arr[2] = num;
+        }
+        output.textContent = num;
     }
 
-    if (dataSymbol !== null && dataSymbol !== '=') prevSymbol = dataSymbol;
+    if (dataSymbol !== null && dataSymbol !== '=' && dataSymbol !== '±' && dataSymbol !== '%') prevSymbol = dataSymbol;
 
     console.log(arr, ' | ', prevSymbol);
 }
