@@ -14,7 +14,7 @@ function clearAll() {
     num = '';
     evalFirstNum = '';
     sign = '';
-    arr = [];
+    arr.length = 0;
     prevSymbol = '';
     output.textContent = '';
     initialStylingInactivity();
@@ -99,15 +99,22 @@ document.querySelector('.buttons').onclick = (event) => {
 
             if (arr.length === 1) {
                 arr.push(dataSymbol);
-                output.textContent = dataSymbol;
+                // output.textContent = dataSymbol;
             } else if (arr.length === 2) {
                 arr[1] = dataSymbol;
-                output.textContent = dataSymbol;
+                // output.textContent = dataSymbol;
             } else if (arr.length === 3) {
                 if (arr[1] === '/' && arr[2] === '0') {
                     divisionAndZero();
                 } else {
                     num = String(eval(arr.join(' ')));
+                    if (num.includes('.')) {
+                        num = String(+num + Number.EPSILON); //TODO Test with negative numbers.
+                        num = num.slice(0, Math.max(...(arr.map(function (item) {
+                            return item.length;
+                        }))))
+                    }
+
                     output.textContent = num;
                     arr.length = 0;
                     arr.push(num, dataSymbol);
@@ -118,12 +125,24 @@ document.querySelector('.buttons').onclick = (event) => {
                 divisionAndZero();
             } else {
                 num = String(eval(arr.join(' ')));
+                if (num.includes('.')) {
+                    num = String(+num + Number.EPSILON); //TODO Test with negative numbers.
+                    num = num.slice(0, Math.max(...(arr.map(function (item) {
+                        return item.length;
+                    }))))
+                }
+
                 output.textContent = num;
                 arr.length = 0;
                 arr.push(num);
             }
         }
     } else if (arrClassList.includes('special_action')) { //? Special action check
+        switch (dataSymbol) {
+            case "ac":
+                clearAll();
+                break;
+        }
         // if (arrActions.includes(sign)) return;
         // switch (dataSymbol) {
         //     case "ac":
