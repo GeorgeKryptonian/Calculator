@@ -143,6 +143,8 @@ document.querySelector('.buttons').onclick = (event) => {
                 clearAll();
                 break;
         }
+
+        //! ↓ Rewrite special actions ↓
         // if (arrActions.includes(sign)) return;
         // switch (dataSymbol) {
         //     case "ac":
