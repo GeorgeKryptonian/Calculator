@@ -106,7 +106,11 @@ document.querySelector('.buttons').onclick = (event) => {
                 num = String(eval(arr.join(' ')));
                 if (arr.join('').includes('.')) {
                     if (num.includes('.')) {
-                        num = String(+num + Number.EPSILON);
+                        if (arr[0] < 0 && arr[2] < 0) {
+                            num = String(+num - Number.EPSILON);
+                        } else {
+                            num = String(+num + Number.EPSILON);
+                        }
                         num = num.slice(0, Math.max(...(arr.map(function (item) {
                             return item.length;
                         }))))
