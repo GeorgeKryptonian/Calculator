@@ -1,4 +1,4 @@
-//! Warning! Below is crappy but working code...
+//! Warning! Below is crappy but partially working code...
 
 let num = '';
 let prevSymbol = '';
@@ -102,10 +102,11 @@ document.querySelector('.buttons').onclick = (event) => {
                     divisionAndZero();
                     return;
                 }
+                //TODO 1. Fix the problem with negative numbers | FOR ( + - * / ) ====================================
                 num = String(eval(arr.join(' ')));
                 if (arr.join('').includes('.')) {
                     if (num.includes('.')) {
-                        num = String(+num + Number.EPSILON); //TODO Test with negative numbers.
+                        num = String(+num + Number.EPSILON);
                         num = num.slice(0, Math.max(...(arr.map(function (item) {
                             return item.length;
                         }))))
@@ -114,16 +115,22 @@ document.querySelector('.buttons').onclick = (event) => {
                 output.textContent = num;
                 arr.length = 0;
                 arr.push(num, dataSymbol);
+                //TODO END ====================================
             }
         } else if (dataSymbol === '=' && arr.length === 3) {
             if (arr[1] === '/' && arr[2] === '0') {
                 divisionAndZero();
                 return;
             }
+            //TODO 2. Fix the problem with negative numbers | FOR ( = ) ====================================
             num = String(eval(arr.join(' ')));
             if (arr.join('').includes('.')) {
                 if (num.includes('.')) {
-                    num = String(+num + Number.EPSILON); //TODO Test with negative numbers.
+                    if (arr[0] < 0 && arr[2] < 0) {
+                        num = String(+num - Number.EPSILON);
+                    } else {
+                        num = String(+num + Number.EPSILON);
+                    }
                     num = num.slice(0, Math.max(...(arr.map(function (item) {
                         return item.length;
                     }))))
@@ -132,6 +139,7 @@ document.querySelector('.buttons').onclick = (event) => {
             output.textContent = num;
             arr.length = 0;
             arr.push(num);
+            //TODO END ====================================
         } else if (dataSymbol === '=' && arr.length !== 3) return;
         num = '';
     } else if (arrClassList.includes('special_action')) { //? Special action check
@@ -140,13 +148,11 @@ document.querySelector('.buttons').onclick = (event) => {
                 clearAll();
                 return;
             case "±":
-                switch (String(Math.sign(num))) {
-                    case "1":
-                        num = String(-num);
-                        break;
-                    case "-1":
-                        num = num.slice(1);
-                        break;
+                if (arr.length === 2) return;
+                if (num > 0) {
+                    num = String(-num);
+                } else  if (num < 0) {
+                    num = num.slice(1);
                 }
                 break;
             case "%":
@@ -167,4 +173,6 @@ document.querySelector('.buttons').onclick = (event) => {
     console.log(arr, ' | ', prevSymbol);
 }
 
-//! Warning! Above is crappy but working code...
+//! A warning! Above is crappy but partially working code...
+
+//TODO 3. Continue testing and entering different operand variants
