@@ -3,31 +3,22 @@
 let num = '';
 let prevSymbol = '';
 let arr = [];
-let tempArr = [];
 const output = document.querySelector('.calc-screen p');
 const collectionSpecialActions = document.querySelectorAll('.special_action');
 const collectionActions = document.querySelectorAll('.action');
+const tumbleweeds = document.querySelector('.tumbleweeds');
 
 function clearAll() {
     num = '';
     arr.length = 0;
     prevSymbol = '';
     output.textContent = '';
+    tumbleweeds.classList.remove('hidden');
     initialStylingInactivity();
 }
 
-function divisionAndZero() {
-    output.textContent = 'Error!';
-    alert('You cannot divide by 0. Try again.');
-    setTimeout(clearAll, 1000);
-
-}
-
-function mathNum(numOne, sign, numTwo, secondOperand) {
-    if (sign === '+') return (numOne * secondOperand + numTwo * secondOperand) / secondOperand;
-    if (sign === '-') return (numOne * secondOperand - numTwo * secondOperand) / secondOperand;
-//     if (sign === '*') return ((numOne * 10) * numTwo * 10) / 10; //TODO 1. Fix the problem for ( * ) operation
-    if (sign === '/') return numOne / numTwo;
+function mathNum(number) {
+    return (parseFloat(number.toPrecision(12)));
 }
 
 function stylingInactive() {
@@ -78,6 +69,7 @@ document.querySelector('.buttons').onclick = (event) => {
         } else {
             initialStylingActivity();
         }
+        tumbleweeds.classList.add('hidden');
         if (arr.length === 0) {
             num = dataSymbol;
             arr.push(num);
@@ -96,26 +88,22 @@ document.querySelector('.buttons').onclick = (event) => {
             output.textContent = num;
         }
     } else if (arrClassList.includes('action')) { //? Action check
+        if (arr[1] === '/' && arr[2] === '0') {
+            output.textContent = 'Error!';
+            alert('You cannot divide by 0. Try again.');
+            setTimeout(clearAll, 1000);
+            return;
+        }
         if (dataSymbol !== '=') {
-            if (prevSymbol === '.') return;
+            if (prevSymbol === '.' || arr.length === 0) return;
             stylingInactive();
             if (arr.length === 1) {
                 arr.push(dataSymbol);
             } else if (arr.length === 2) {
                 arr[1] = dataSymbol;
             } else if (arr.length === 3) {
-                if (arr[1] === '/' && arr[2] === '0') {
-                    divisionAndZero();
-                    return;
-                }
-                if (arr[0].includes('.') && arr[2].includes('.')) {
-                    num = String(mathNum(arr[0], arr[1], arr[2], `1${'0'.repeat(
-                        Math.max(
-                            ...[arr[0], arr[2]].map(item => {
-                                return item.slice(item.indexOf('.') + 1).length;
-                            })
-                        )
-                    )}`));
+                if (arr[0].includes('.') && arr[2].includes('.')) { //TODO 1. Fix code duplication (if it is possible)
+                    num = String(mathNum(eval(arr.join(' '))));
                 } else {
                     num = String(eval(arr.join(' ')));
                 }
@@ -124,18 +112,8 @@ document.querySelector('.buttons').onclick = (event) => {
                 arr.push(num, dataSymbol);
             }
         } else if (dataSymbol === '=' && arr.length === 3) {
-            if (arr[1] === '/' && arr[2] === '0') {
-                divisionAndZero();
-                return;
-            }
-            if (arr[0].includes('.') && arr[2].includes('.')) {
-                num = String(mathNum(arr[0], arr[1], arr[2], `1${'0'.repeat(
-                    Math.max(
-                        ...[arr[0], arr[2]].map(item => {
-                            return item.slice(item.indexOf('.') + 1).length;
-                        })
-                    )
-                )}`));
+            if (arr[0].includes('.') && arr[2].includes('.')) { //TODO 1. Fix code duplication (if it is possible)
+                num = String(mathNum(eval(arr.join(' '))));
             } else {
                 num = String(eval(arr.join(' ')));
             }
@@ -143,7 +121,6 @@ document.querySelector('.buttons').onclick = (event) => {
             arr.length = 0;
             arr.push(num);
         } else if (dataSymbol === '=' && arr.length !== 3) return;
-        // num = '';
     } else if (arrClassList.includes('special_action')) { //? Special action check
         switch (dataSymbol) {
             case "ac":
@@ -153,7 +130,7 @@ document.querySelector('.buttons').onclick = (event) => {
                 if (arr.length === 2) return;
                 if (num > 0) {
                     num = String(-num);
-                } else  if (num < 0) {
+                } else if (num < 0) {
                     num = num.slice(1);
                 }
                 break;
@@ -167,7 +144,7 @@ document.querySelector('.buttons').onclick = (event) => {
         } else if (arr.length === 3) {
             arr[2] = num;
         }
-        output.textContent = num;
+        if (num !== '') output.textContent = num;
     }
 
     if (dataSymbol !== null && dataSymbol !== '=' && dataSymbol !== '±' && dataSymbol !== '%') prevSymbol = dataSymbol;
