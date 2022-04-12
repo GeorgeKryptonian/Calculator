@@ -18,7 +18,7 @@ function clearAll() {
 }
 
 function mathNum(number) {
-    return (parseFloat(number.toPrecision(12)));
+    return parseFloat(number.toPrecision(12));
 }
 
 function stylingInactive() {
@@ -88,7 +88,7 @@ document.querySelector('.buttons').onclick = (event) => {
             output.textContent = num;
         }
     } else if (arrClassList.includes('action')) { //? Action check
-        if (arr[1] === '/' && arr[2] === '0') {
+        if (arr[1] === '/' && arr[2].match(/[1-9]/) === null) {
             output.textContent = 'Error!';
             alert('You cannot divide by 0. Try again.');
             setTimeout(clearAll, 1000);
@@ -154,4 +154,6 @@ document.querySelector('.buttons').onclick = (event) => {
 
 //! A warning! Above is crappy but partially working code...
 
-//TODO 2. Continue testing and entering different operand variants
+//TODO 2. If there are 16 digits in the number, then do not allow further input
+
+//TODO 3. Continue testing and entering different operand variants
