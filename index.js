@@ -17,9 +17,9 @@ function clearAll() {
     initialStylingInactivity();
 }
 
-function mathNum(number) {
-    return parseFloat(number.toPrecision(12));
-}
+const mathNum = (number) => parseFloat(number.toPrecision(15));
+
+const numDigitsLength = () => num.split('').filter(item => item !== '.' && item !== '-').length;
 
 function stylingInactive() {
     collectionSpecialActions.forEach((item, index) => {
@@ -62,7 +62,12 @@ document.querySelector('.buttons').onclick = (event) => {
     let dataSymbol = event.target.getAttribute('data-symbol');
 
     if (arrClassList.includes('digit')) { //? Digit check
-        if (dataSymbol === '.' && num === '' || dataSymbol === '.' && num.includes('.') || num[0] === '0' && num.length === 1 && dataSymbol !== '.') {
+        if (dataSymbol === '.' && '/*-+'.includes(prevSymbol) || dataSymbol === '.' && num === '' || dataSymbol === '.' && num.includes('.') || num[0] === '0' && num.length === 1 && dataSymbol !== '.') {
+            return;
+        } else if ('/*-+'.includes(prevSymbol)) {
+            num = '';
+        } else if (numDigitsLength() === 16) {
+            alert('The limit of 16 digits has been reached. Try to select an operation.');
             return;
         } else if (dataSymbol === '.') {
             initialStylingInactivity();
@@ -94,8 +99,8 @@ document.querySelector('.buttons').onclick = (event) => {
             setTimeout(clearAll, 1000);
             return;
         }
+        if (prevSymbol === '.' || arr.length === 0) return;
         if (dataSymbol !== '=') {
-            if (prevSymbol === '.' || arr.length === 0) return;
             stylingInactive();
             if (arr.length === 1) {
                 arr.push(dataSymbol);
@@ -104,6 +109,7 @@ document.querySelector('.buttons').onclick = (event) => {
             } else if (arr.length === 3) {
                 if (arr[0].includes('.') && arr[2].includes('.')) { //TODO 1. Fix code duplication (if it is possible)
                     num = String(mathNum(eval(arr.join(' '))));
+                    //
                 } else {
                     num = String(eval(arr.join(' ')));
                 }
@@ -114,6 +120,7 @@ document.querySelector('.buttons').onclick = (event) => {
         } else if (dataSymbol === '=' && arr.length === 3) {
             if (arr[0].includes('.') && arr[2].includes('.')) { //TODO 1. Fix code duplication (if it is possible)
                 num = String(mathNum(eval(arr.join(' '))));
+
             } else {
                 num = String(eval(arr.join(' ')));
             }
@@ -121,6 +128,7 @@ document.querySelector('.buttons').onclick = (event) => {
             arr.length = 0;
             arr.push(num);
         } else if (dataSymbol === '=' && arr.length !== 3) return;
+        // num = '';
     } else if (arrClassList.includes('special_action')) { //? Special action check
         switch (dataSymbol) {
             case "ac":
@@ -135,9 +143,12 @@ document.querySelector('.buttons').onclick = (event) => {
                 }
                 break;
             case "%":
-                if (num === '' || prevSymbol === '.') return;
+                if (num === '' || prevSymbol === '.' || '/*-+'.includes(prevSymbol)) return;
                 num = String(num / 100);
                 break;
+        }
+        if (numDigitsLength() >= 16) {
+            num = String(mathNum(Number(num)));
         }
         if (arr.length === 1) {
             arr[0] = num;
@@ -153,7 +164,5 @@ document.querySelector('.buttons').onclick = (event) => {
 }
 
 //! A warning! Above is crappy but partially working code...
-
-//TODO 2. If there are 16 digits in the number, then do not allow further input
 
 //TODO 3. Continue testing and entering different operand variants
