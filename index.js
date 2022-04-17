@@ -17,10 +17,6 @@ function clearAll() {
     initialStylingInactivity();
 }
 
-const mathNum = (number) => parseFloat(number.toPrecision(15));
-
-const numDigitsLength = () => num.split('').filter(item => item !== '.' && item !== '-').length;
-
 function stylingInactive() {
     collectionSpecialActions.forEach((item, index) => {
         if (index !== 0) {
@@ -57,24 +53,41 @@ function initialStylingActivity() {
 
 initialStylingInactivity();
 
+//!
+
+const calcOperations = (numOne, numTwo, operation) => {
+    switch (operation) {
+        case "+":
+            return bigDecimal.add(numOne, numTwo);
+        case "-":
+            return bigDecimal.subtract(numOne, numTwo);
+        case "*":
+            return bigDecimal.multiply(numOne, numTwo);
+        case "/":
+            return bigDecimal.divide(numOne, numTwo);
+    }
+}
+
+//!
+
 document.querySelector('.buttons').onclick = (event) => {
     let arrClassList = [...event.target.classList];
     let dataSymbol = event.target.getAttribute('data-symbol');
 
     if (arrClassList.includes('digit')) { //? Digit check
+
         if (dataSymbol === '.' && '/*-+'.includes(prevSymbol) || dataSymbol === '.' && num === '' || dataSymbol === '.' && num.includes('.') || num[0] === '0' && num.length === 1 && dataSymbol !== '.') {
             return;
-        } else if ('/*-+'.includes(prevSymbol)) {
-            num = '';
-        } else if (numDigitsLength() === 16) {
-            alert('The limit of 16 digits has been reached. Try to select an operation.');
-            return;
         } else if (dataSymbol === '.') {
+            console.log('if (dataSymbol === \'.\')');
             initialStylingInactivity();
         } else {
+            console.log('else');
             initialStylingActivity();
         }
+
         tumbleweeds.classList.add('hidden');
+
         if (arr.length === 0) {
             num = dataSymbol;
             arr.push(num);
@@ -93,13 +106,16 @@ document.querySelector('.buttons').onclick = (event) => {
             output.textContent = num;
         }
     } else if (arrClassList.includes('action')) { //? Action check
-        if (arr[1] === '/' && arr[2].match(/[1-9]/) === null) {
+
+        if (arr.length === 3 && arr[1] === '/' && arr[2].match(/[1-9]/) === null) {
             output.textContent = 'Error!';
             alert('You cannot divide by 0. Try again.');
             setTimeout(clearAll, 1000);
             return;
         }
+
         if (prevSymbol === '.' || arr.length === 0) return;
+
         if (dataSymbol !== '=') {
             stylingInactive();
             if (arr.length === 1) {
@@ -107,53 +123,35 @@ document.querySelector('.buttons').onclick = (event) => {
             } else if (arr.length === 2) {
                 arr[1] = dataSymbol;
             } else if (arr.length === 3) {
-                if (arr[0].includes('.') && arr[2].includes('.')) { //TODO 1. Fix code duplication (if it is possible)
-                    num = String(mathNum(eval(arr.join(' '))));
-                    //
-                } else {
-                    num = String(eval(arr.join(' ')));
-                }
+                num = String(Number(calcOperations(arr[0], arr[2], arr[1])));
                 output.textContent = num;
                 arr.length = 0;
                 arr.push(num, dataSymbol);
             }
         } else if (dataSymbol === '=' && arr.length === 3) {
-            if (arr[0].includes('.') && arr[2].includes('.')) { //TODO 1. Fix code duplication (if it is possible)
-                num = String(mathNum(eval(arr.join(' '))));
-
-            } else {
-                num = String(eval(arr.join(' ')));
-            }
+            num = String(Number(calcOperations(arr[0], arr[2], arr[1])));
             output.textContent = num;
             arr.length = 0;
             arr.push(num);
         } else if (dataSymbol === '=' && arr.length !== 3) return;
-        // num = '';
+        num = '';
     } else if (arrClassList.includes('special_action')) { //? Special action check
-        switch (dataSymbol) {
-            case "ac":
-                clearAll();
-                return;
-            case "±":
-                if (arr.length === 2) return;
-                if (num > 0) {
-                    num = String(-num);
-                } else if (num < 0) {
-                    num = num.slice(1);
-                }
-                break;
-            case "%":
-                if (num === '' || prevSymbol === '.' || '/*-+'.includes(prevSymbol)) return;
-                num = String(num / 100);
-                break;
+        if (dataSymbol === 'ac') {
+            clearAll();
+            return;
         }
-        if (numDigitsLength() >= 16) {
-            num = String(mathNum(Number(num)));
-        }
-        if (arr.length === 1) {
-            arr[0] = num;
-        } else if (arr.length === 3) {
-            arr[2] = num;
+        if (arr.length === 1 || arr.length === 3) {
+            if (prevSymbol === '.' || +num === 0) return;
+            if (dataSymbol === '±') {
+                num = bigDecimal.negate(num);
+            } else if (dataSymbol === '%') { //TODO 1. Solve the problem with a final result of 0
+                num = String(Number(bigDecimal.divide(num, '100')));
+            }
+            if (arr.length === 1) {
+                arr[0] = num;
+            } else if (arr.length === 3) {
+                arr[2] = num;
+            }
         }
         if (num !== '') output.textContent = num;
     }
@@ -165,4 +163,4 @@ document.querySelector('.buttons').onclick = (event) => {
 
 //! A warning! Above is crappy but partially working code...
 
-//TODO 3. Continue testing and entering different operand variants
+//TODO 2. Continue testing and entering different operand variants
