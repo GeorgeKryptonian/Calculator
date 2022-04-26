@@ -1,1 +1,1 @@
-*Link to the project - https://georgekryptonian.github.io/Unfinished-Calculator/*
+*Link to the project - https://georgekryptonian.github.io/Calculator/*
